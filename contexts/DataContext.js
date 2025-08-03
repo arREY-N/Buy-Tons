@@ -3,8 +3,8 @@ import { createContext, useContext, useEffect, useState } from "react";
 const DataContext = createContext(null);
 
 export const DataProvider = ({children}) => {
-    const [pending, setPending] = useState(10)
-    const [sales, setSales] = useState(1000);
+    const [pending, setPending] = useState([])
+    const [totalSales, setSales] = useState(1000);
     
     const [items, setItems] = useState([
         {id: 1, name: 'Pythons Shirt', price: 300},
@@ -19,9 +19,10 @@ export const DataProvider = ({children}) => {
     const data = items.length % 2 !== 0 ? [...items, {id: 'spacer', name: '', price: 0, isSpacer: true}] : items
 
     const [transaction, setTransaction] = useState([
-        {id: 1, amount: 1000, pending: false},
-        {id: 2, amount: 340, pending: true},
-        {id: 3, amount: 200, pending: true}
+        {id: 1, customer: 'Customer A', amount: 1000, date: Date.now(), status: 'PAID'},
+        {id: 2, customer: 'Customer B', amount: 300, date: Date.now(), status: 'DP'},
+        {id: 3, customer: 'Customer C', amount: 1000, date: Date.now(), status: 'CLAIMED'},
+        {id: 4, customer: 'Customer D', amount: 1000, date: Date.now(), status: 'READY'},
     ]);
 
 
@@ -30,7 +31,7 @@ export const DataProvider = ({children}) => {
             return acc + curr.amount;
         }, 0);
 
-        const pendingOrders = transaction.filter(transaction => transaction.pending === true).length;
+        const pendingOrders = transaction.filter(transaction => transaction.status !== "DP");
 
         setPending(pendingOrders);
         setSales(newSalesTotal);
@@ -42,7 +43,7 @@ export const DataProvider = ({children}) => {
             data,
             transaction,
             pending,
-            sales,
+            totalSales,
             setSales,
             setItems,
             setPending,
