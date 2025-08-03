@@ -1,15 +1,10 @@
-import { DataProvider } from "@/contexts/DataContext";
-import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { Tabs } from "expo-router";
 import { StyleSheet, View } from "react-native";
 
 export default function RootLayout() {
     return (
-        <ThemeProvider>
-            <DataProvider>
-                <App/>        
-            </DataProvider>
-        </ThemeProvider>
+        <App/>
     )
 }
 
@@ -25,17 +20,14 @@ const App = () => {
 
     return(
         <View style = {styles.container}>
-            <Tabs        
+            <Tabs 
                 screenOptions={{
                     headerShown: false,
                     tabBarStyle: {
                         backgroundColor: theme.container,
                         borderColor: theme.container,
-                        borderTopLeftRadius: 16,
-                        borderTopRightRadius: 16,
                         height: 80,
                         justifyContent: 'center',
-                        
                     }                
                 }}
             >
@@ -50,13 +42,6 @@ const App = () => {
                     name = 'order'
                     options = {{
                         title: 'Order'
-                    }}
-                />
-
-                <Tabs.Screen 
-                    name = 'transaction'
-                    options = {{
-                        title: 'Transaction'
                     }}
                 />
                 
