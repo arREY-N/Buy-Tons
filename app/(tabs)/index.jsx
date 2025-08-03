@@ -11,7 +11,6 @@ const app = () => {
 
     const styles = StyleSheet.create({  
         container: {
-            marginHorizontal: '2%',
             backgroundColor: theme.background,
             flex: 1,
             flexDirection: 'column',
