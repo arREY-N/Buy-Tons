@@ -12,17 +12,19 @@ const Info = ({title, value}) => {
 }
 
 export const Overview = () => {
-    const { sales, pending } = useData();
+    const { totalSales, pending } = useData();
 
+    console.log(pending.length);
+    
     return(
         <View style = {styles.overview}>
             <Info 
                 title={'Total Sales'} 
-                value={`P${sales.toFixed(2)}`}/>
+                value={`P${totalSales.toFixed(2)}`}/>
             
             <Info 
                 title={'Pending Orders'} 
-                value={pending}/>
+                value={pending.length}/>
         </View>
     )
 }
