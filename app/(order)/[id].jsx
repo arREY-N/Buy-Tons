@@ -1,22 +1,24 @@
 import useData from "@/contexts/DataContext";
-import { useTheme } from "@/contexts/ThemeContext";
 import formatDate from '@/utilities/date';
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { Text, View } from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import { FlatList, Text, View } from "react-native";
 
 const OrderDetailScreen = () => {
     const { id } = useLocalSearchParams();
-    const router = useRouter();
     const { transaction } = useData();
-    const { theme } = useTheme();
-
-    console.log(id);
-    console.log(transaction);
     
     const order = transaction.find(t => t.id.toString() === id.toString());
-
-    console.log(order);
     
+    const renderOrderItems = ({ item }) => {
+        return(
+            <View>
+                <Text>{item.item}</Text>
+                <Text>{item.quantity}</Text>
+            </View>
+        )
+    }
+
+
     if(order){
         return(
             <View>
@@ -24,6 +26,12 @@ const OrderDetailScreen = () => {
                 <Text>P {order.amount.toFixed(2)}</Text>
                 <Text>{formatDate(order.date)}</Text>
                 <Text>{order.status}</Text>
+                
+                <FlatList
+                    data={order.items}
+                    renderItem={renderOrderItems}
+                    keyExtractor={o => o.id}
+                /> 
             </View>
         )
     } 
@@ -34,7 +42,3 @@ const OrderDetailScreen = () => {
 }
 
 export default OrderDetailScreen
-
-export const options = {
-    title: ({params}) => `Order: #${params.id}`
-};
