@@ -33,6 +33,14 @@ const ScreenStack = () => {
                 }
             }}/>
 
+            <Stack.Screen name = '(tabs)/order' options = {{
+                headerShown: false,
+                title: 'Order Details',
+                contentStyle: {
+                    backgroundColor: theme.background
+                }
+            }}/>
+
             <Stack.Screen name = '(auth)' options={{
                 headerShown: false,
                 title: 'Auth',
