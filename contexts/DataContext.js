@@ -19,10 +19,47 @@ export const DataProvider = ({children}) => {
     const data = items.length % 2 !== 0 ? [...items, {id: 'spacer', name: '', price: 0, isSpacer: true}] : items
 
     const [transaction, setTransaction] = useState([
-        {id: 1, customer: 'Customer A', amount: 1000, date: Date.now(), status: 'PAID'},
-        {id: 2, customer: 'Customer B', amount: 300, date: Date.now(), status: 'DP'},
-        {id: 3, customer: 'Customer C', amount: 1000, date: Date.now(), status: 'CLAIMED'},
-        {id: 4, customer: 'Customer D', amount: 1000, date: Date.now(), status: 'READY'},
+        {
+            id: 1, 
+            customer: 'Customer A', 
+            amount: 300, 
+            date: Date.now(), 
+            status: 'PAID',
+            items: [
+                { id: 1, item: 'Turing Shirt', quantity: 1}, 
+            ]
+        },
+        {
+            id: 2, 
+            customer: 'Customer B', 
+            amount: 350, 
+            date: Date.now(), 
+            status: 'DP',
+            items: [
+                { id: 1, item: 'Ada Shirt', quantity: 2}
+            ]
+        },
+        {
+            id: 3, 
+            customer: 'Customer C', 
+            amount: 650, 
+            date: Date.now(), 
+            status: 'CLAIMED',
+            items: [
+                { id: 1, item: 'Turing Shirt', quantity: 1},
+                { id: 2, item: 'Ada Shirt', quantity: 1}
+            ]
+        },
+        {
+            id: 4, 
+            customer: 'Customer D', 
+            amount: 78, 
+            date: Date.now(), 
+            status: 'READY',
+            items: [
+                { id: 1, item: 'Sticker Set', quantity : 2}
+            ]
+        },
     ]);
 
 
@@ -40,6 +77,7 @@ export const DataProvider = ({children}) => {
     
     return (
         <DataContext.Provider value={{
+            items,
             data,
             transaction,
             pending,
