@@ -2,7 +2,9 @@ import { Header } from '@/components/header';
 import { ItemGallery, Overview } from '@/components/overview';
 import { useTheme } from '@/contexts/ThemeContext';
 import {
+    Pressable,
     StyleSheet,
+    Text,
     View
 } from 'react-native';
 
@@ -19,6 +21,9 @@ const app = () => {
     
     return (
         <View style={styles.container}>
+            <Pressable onPress={() => toggleTheme()}>
+                <Text>Theme</Text>
+            </Pressable>
             <Header/>
             <Overview/>       
             <ItemGallery/>
