@@ -4,8 +4,8 @@ import { useColorScheme } from "react-native";
 export const COLOR_PALETTE = {
     light:{
         text: 'hsl(240, 7%, 6%)',
-        background: 'hsl(0, 0%, 90%)',
-        container: 'hsl(0, 0%, 70%)',
+        background: 'hsl(0, 0%, 95%)',
+        container: 'hsl(0, 0%, 90%)',
     },
     dark: {
         text: 'hsl(0, 0%, 90%)',
