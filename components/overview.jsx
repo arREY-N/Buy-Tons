@@ -20,7 +20,7 @@ export const Overview = () => {
         <View style = {styles.overview}>
             <Info 
                 title={'Total Sales'} 
-                value={`P${totalSales.toFixed(2)}`}/>
+                value={`P{totalSales.toFixed(2)}`}/>
             
             <Info 
                 title={'Pending Orders'} 
