@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     paymentInfo: {
-        alignContent: 'right'
+        alignItems: 'flex-end'
     },
     customer: {
         fontWeight: '500'
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     }
 })
 
-const orderScreen = () => {
+const OrderScreen = () => {
     return (
         <View>
             <Header/>
@@ -37,21 +37,27 @@ const orderScreen = () => {
 }
 
 export const OrderGallery = () => {
-    const { transaction } = useData(); 
+    const { transaction, getPaymentInfo, getOrderInfo, customers } = useData(); 
     
     const renderGalleryTransaction = ({item}) => {
+        const { totalPayment } = item.amount !== undefined ? 
+            getPaymentInfo(item.amount) : getPaymentInfo([]);
+
+        const { amountToPay } = getOrderInfo(item);
+        const customer = customers.find(c => c.id === item.customerId);
+
         return(
             <Pressable 
                 style = {styles.order} 
                 onPress={() => router.push(`/(order)/${item.id}`)}
             >
                 <View style = {styles.orderInfo}>
-                    <Text style = {styles.customer}>{item.customer}</Text>
+                    <Text style = {styles.customer}>{customer.name}</Text>
                     <Text>{formatDate(item.date)}</Text>
                 </View>
                 <View style = {styles.paymentInfo}>
-                    <Text>Pitem.amount.toFixed(2)</Text>
-                    <Text style = {styles.status}>{item.status}</Text>
+                    <Text>P {amountToPay.toFixed(2)}</Text>
+                    <Text>P {totalPayment.toFixed(2)}</Text>
                 </View>
             </Pressable>
         )
@@ -66,4 +72,4 @@ export const OrderGallery = () => {
     )
 }
 
-export default orderScreen
+export default OrderScreen
