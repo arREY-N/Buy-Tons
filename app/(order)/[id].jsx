@@ -7,24 +7,6 @@ import formatDate from "@/utilities/date";
 import { useLocalSearchParams } from "expo-router";
 import { FlatList, Pressable, StyleSheet, View } from "react-native";
 
-const detailedOrderItem = (orderItems) => {
-    const { items } = useData();
-
-    return orderItems.map(orderItem => {
-        const product = items.find(product => product.id === orderItem.id);
-
-        if(product){
-            return(
-                {
-                    ...product,
-                    quantity: orderItem.quantity
-                }
-            )
-        }
-        return null;
-    }).filter(Boolean);
-};
-
 const OrderDetailScreen = () => {
     const { theme } = useTheme();
 
@@ -41,17 +23,11 @@ const OrderDetailScreen = () => {
     })
 
     const { id } = useLocalSearchParams();
-    const { transaction, customers } = useData();
+    const { transaction } = useData();
     
     const order = transaction.find(t => t.id.toString() === id.toString());
     
-    if(order){
-        console.log("Customer ID: ", order.customerId);
-        
-        const customer = customers.find(c => c.id === order.customerId)
-        
-        const items = detailedOrderItem(order.items);
-        
+    if(order){        
         return(
             <View style = {{margin: 10}}>
                 <SumRow 
@@ -60,12 +36,10 @@ const OrderDetailScreen = () => {
                     value = {order.status} />
 
                 <ItemGallery 
-                    items = {items} />
+                    order = {order} />
 
                 <OrderSummary 
-                    order = {order} 
-                    items = {items} 
-                    customer = {customer} />
+                    order = {order} />
 
                 <View style = {{flexDirection: 'row', gap: 10}}>
                     <Pressable style = {styles.button}>
@@ -89,26 +63,7 @@ const OrderDetailScreen = () => {
     )
 }
 
-const OrderSummary = ({order, items, customer}) => {
-    const { vouchers, payments } = useData();
-    
-    let records = null;
-    let paid = 0; 
-
-    if(order.amount !== undefined){
-        records = order.amount.map(record => {
-            const payment = payments.find(p => p.id === record.id);
-            
-            console.log(payment);
-            
-            return payment;
-        });
-
-        paid = records.reduce((acc, curr) => {
-            return acc += curr.amount;
-        }, 0); 
-    }
-
+const OrderSummary = ({order}) => {
     const styles = StyleSheet.create({
         container: {
             marginTop: 10,
@@ -125,31 +80,17 @@ const OrderSummary = ({order, items, customer}) => {
             marginLeft: 16
         }
     });
+    
+    const { customers, getPaymentInfo, getOrderInfo } = useData();
+    
+    const { amountToPay, discount } = getOrderInfo(order);
+    
+    const { totalPayment, paymentDetails } = order.amount !== undefined ?
+        getPaymentInfo(order.amount) : getPaymentInfo([]);
+    
+    const customer = customers.find(c => c.id === order.customerId)
 
-    let total = items.reduce((acc, curr) => {
-        const price = curr.price;
-        const quantity = curr.quantity;
-
-        return acc += price * quantity;
-    }, 0)
-
-    let discount = null;
-
-    if(order.voucherId !== undefined){
-        const voucher = vouchers.find(v => v.id === order.voucherId);
-
-        if(voucher.type == 'PER'){
-            discount = (total * voucher.value)
-        }
-        if(voucher.type === 'AMT'){
-            discount = voucher.value
-        }
-        console.log("Disc: ", discount);
-        
-        total -= discount;
-    }
-
-    const balance = total - paid;
+    const balance = amountToPay - (totalPayment + discount);
 
     return(
         <View style = {styles.container}>
@@ -201,27 +142,25 @@ const OrderSummary = ({order, items, customer}) => {
             </StyledText>
             
             <View style = {styles.paymentInfo}>
+                <SumRow 
+                    title = {"Total"}
+                    value = {`P ${amountToPay.toFixed(2)}`} />
+
                 {
-                    discount !== null ?
+                    discount !== 0 ?
                         <SumRow 
                             title = {"Discount"}
                             value = {`-P ${discount.toFixed(2)}`} />
                         : <></>    
                 }
-                
-                <SumRow 
-                    title = {"Total"}
-                    value = {`P ${total.toFixed(2)}`} />
-
-
                 {
-                    records !== null ? 
+                    paymentDetails !== null ? 
                     <>
                         <SumRow 
                             title = {"History"}
                             value = {""} />
                         {
-                            records.map((payment, index) => {
+                            paymentDetails.map((payment, index) => {
                                     return (
                                         <SumRow 
                                             key = {index}
@@ -248,7 +187,7 @@ const OrderSummary = ({order, items, customer}) => {
     )
 }
 
-const ItemGallery = ({items}) => {
+const ItemGallery = ({order}) => {
     const { theme } = useTheme();
     
     const styles = StyleSheet.create({
@@ -281,6 +220,9 @@ const ItemGallery = ({items}) => {
         }
     });
 
+    const { getOrderInfo } = useData();
+    const { orderedItems } = getOrderInfo(order);
+
     const renderOrderItems = ({ item }) => {
         
         const price = item.price === undefined ? 0 : item.price;
@@ -303,7 +245,7 @@ const ItemGallery = ({items}) => {
 
     return(
         <FlatList
-            data={items}
+            data={orderedItems}
             renderItem={renderOrderItems}
             keyExtractor={o => o.id}
             numColumns={1}
