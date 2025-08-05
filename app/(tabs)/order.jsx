@@ -50,7 +50,7 @@ export const OrderGallery = () => {
                     <Text>{formatDate(item.date)}</Text>
                 </View>
                 <View style = {styles.paymentInfo}>
-                    <Text>P {item.amount.toFixed(2)}</Text>
+                    <Text>Pitem.amount.toFixed(2)</Text>
                     <Text style = {styles.status}>{item.status}</Text>
                 </View>
             </Pressable>
