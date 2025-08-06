@@ -1,3 +1,4 @@
+import { useTheme } from "@/contexts/ThemeContext";
 import {
     Pressable,
     StyleSheet,
@@ -6,8 +7,24 @@ import {
 } from "react-native";
 
 export const Header = () => {
+    const {theme} = useTheme();
+
+    const styles = StyleSheet.create({
+        title: {
+            color: theme.text,
+            fontSize: 36,
+            fontWeight: 'bold',
+            textAlign: 'center'
+        },
+        subtitle: {
+            color: theme.text,
+            fontSize: 16,
+            textAlign: 'center'
+        }
+    });
+
     return(
-        <View>
+        <View style={{margin: 10}}>
             <Text style = {styles.title}>Buy Tons</Text>
             <Text style = {styles.subtitle}>by Pythons</Text>
         </View>
@@ -15,6 +32,15 @@ export const Header = () => {
 }
 
 export const SubHead = () => {
+    const styles = StyleSheet.create({
+        subHead:{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginHorizontal: 15,
+            marginBottom: 10
+        },
+    })
+
     return(
         <View style = {styles.subHead}>
             <Text>Items</Text>
@@ -26,23 +52,3 @@ export const SubHead = () => {
 }
 
 export default Header;
-
-const styles = StyleSheet.create({
-    title: {
-        color: 'black',
-        fontSize: 36,
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
-    subtitle: {
-        color: 'black',
-        fontSize: 16,
-        textAlign: 'center'
-    },
-    subHead:{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginHorizontal: 15,
-        marginBottom: 10
-    },
-})
