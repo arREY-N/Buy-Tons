@@ -1,32 +1,27 @@
 import { Header } from '@/components/header';
 import { ItemGallery, Overview } from '@/components/overview';
+import StyledText from '@/components/styledText';
 import { useTheme } from '@/contexts/ThemeContext';
 import {
     Pressable,
-    StyleSheet,
-    Text,
     View
 } from 'react-native';
 
 const app = () => {
-    const {theme, toggleTheme} = useTheme();
-
-    const styles = StyleSheet.create({  
-        container: {
-            backgroundColor: theme.background,
-            flex: 1,
-            flexDirection: 'column',
-        }  
-    });
+    const {ContainerStyle, toggleTheme} = useTheme();
     
     return (
-        <View style={styles.container}>
-            <Pressable onPress={() => toggleTheme()}>
-                <Text>Theme</Text>
-            </Pressable>
-            <Header/>
-            <Overview/>       
-            <ItemGallery/>
+        <View style={ContainerStyle.container}>
+            <View style={ContainerStyle.content}>
+                <Header/>
+
+                <Pressable onPress={() => toggleTheme()}>
+                    <StyledText>Theme</StyledText>
+                </Pressable>
+                
+                <Overview/>       
+                <ItemGallery/>
+            </View>
         </View>
     )
 }
