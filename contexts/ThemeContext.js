@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { useColorScheme } from "react-native";
+import { StyleSheet, useColorScheme } from "react-native";
 
 export const COLOR_PALETTE = {
     light:{
@@ -44,7 +44,22 @@ export const ThemeProvider = ({children}) => {
         setIsDark(prev => !prev);
     };
 
-    const value = { theme, toggleTheme, AppColors };
+    const ContainerStyle = StyleSheet.create({
+        container: {
+            backgroundColor: theme.background,
+            flex: 1,
+        },
+        content: {
+            marginHorizontal: 10
+        }
+    })
+
+    const value = { 
+        theme, 
+        toggleTheme, 
+        AppColors, 
+        ContainerStyle 
+    };
 
     return(
         <ThemeContext.Provider value = { value }>
