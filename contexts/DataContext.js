@@ -3,19 +3,35 @@ import itemsData from '@/sampleData/items';
 import paymentsData from '@/sampleData/payments';
 import transactionsData from '@/sampleData/transactions';
 import vouchersData from '@/sampleData/vouchers';
-import { createContext, useContext, useEffect, useState } from "react";
+import { formatDateOnly } from '@/utilities/date';
+import { createContext, useEffect, useState } from "react";
 
 const DataContext = createContext(null);
 
 export const DataProvider = ({children}) => {
-    const [pending, setPending] = useState([])
-    const [totalSales, setSales] = useState(0);
+    const [customers, setCustomers] = useState(customersData);
+    
+    const [items, setItems] = useState(itemsData);
+
+    const [searchOrder, setSearchOrder] = useState('');
+    
     const [vouchers, setVouchers] = useState(vouchersData);
     const [payments, setPayments] = useState(paymentsData);
-    const [customers, setCustomers] = useState(customersData);
-    const [items, setItems] = useState(itemsData);
     const [transaction, setTransaction] = useState(transactionsData);
+    const [activeFilters, setActiveFilters] = useState([]);
 
+    const [searchResults, setSearchResults] = useState([]);
+    const [filterResults, setFilterResults] = useState([]);
+    
+    const [filteredTransaction, setFilteredTransaction] = useState(transaction);
+    const [datedTransaction, setDatedTransaction] = useState({});
+    const [claimed, setClaimed] = useState([]);
+    const [unclaimed, setUnclaimed] = useState([]);
+    const [production, setProduction] = useState([]);
+    const [fullyPaid, setFullyPaid] = useState([])
+    const [downpayment, setDownpayment] = useState([]);
+    const [totalSales, setSales] = useState(0);
+    
     const data = items.length % 2 !== 0 ? [...items, {id: 'spacer', name: '', price: 0, isSpacer: true}] : items
 
     const getOrderInfo = (order) => {
@@ -76,60 +92,187 @@ export const DataProvider = ({children}) => {
             totalPayment: totalPayment
         };
     }
+    
+    useEffect(() => {
+        if(searchOrder){
+            const searchedCustomer = customers.find(c => 
+                c.name.toUpperCase() === searchOrder.toUpperCase());
+        
+            if(searchedCustomer){
+                const customerOrders = filteredTransaction.filter(t => t.customerId === searchedCustomer.id);       
+                setSearchResults(customerOrders);
+            }
+        } else {
+            setSearchResults([]);
+        }
+    }, [searchOrder]);
+    
+    useEffect(() => {
+        const newFilteredResults = [];
+
+        if(activeFilters.length > 0){
+            activeFilters.forEach(filter => {
+                console.log(filter);
+                
+                const currentFilter = transactionsData.filter(t => t.status === filter.toUpperCase())
+                console.log(currentFilter);
+                
+                newFilteredResults.push(...currentFilter);
+            })
+            
+            console.log('filtered: ', newFilteredResults);
+            
+            setFilterResults(newFilteredResults);  
+        } else {
+            setFilterResults([])
+        }
+    }, [activeFilters]);
+    
+    useEffect(() => {
+        console.log("here");
+        if(searchResults.length > 0 || filterResults.length > 0){
+
+            const smaller = searchResults.length > filterResults.length ? filterResults : searchResults;
+            const larger = searchResults.length > filterResults.length ? searchResults : filterResults;
+            
+            const set1 = new Set(smaller);
+            
+            console.log("Set1: ", set1);
+
+            const intersection = larger.filter(element => set1.has(element));
+            
+
+            if(intersection !== undefined){
+                console.log('und');
+                setFilteredTransaction(intersection);
+            } else {
+                console.log('larger');
+                setFilteredTransaction(larger);
+            }
+        } else {
+            console.log('kvbjdf');
+            
+            setFilteredTransaction(transactionsData);
+        }
+    }, [searchOrder, activeFilters]);
+
 
     useEffect(() => {
-        const newSalesTotal = transaction.reduce((acc, curr) => {
+        let computedSales = 0;
+        const datedTransactions = {};
+        const newClaimed = [];
+        const newUnclaimed = [];
+        const newProduction = [];
+        const newFullyPaid = [];
+        const newDownpayment = []
+        
+        filteredTransaction.forEach((curr, _) => {
             const amounts = curr.amount;
+            const transactionDate = formatDateOnly(curr.date);
 
-            let orderPayments = 0; 
+            if(!datedTransactions[transactionDate]){
+                datedTransactions[transactionDate] = [];
+            }
+
+            datedTransactions[transactionDate].push(curr);
 
             if(amounts !== undefined){
                 const { totalPayment } = getPaymentInfo(amounts);
-                orderPayments = totalPayment;        
+                computedSales += totalPayment;
             }
-            
-            return acc + orderPayments;
-        }, 0);
-        
-        const pendingOrders = transaction.filter(transaction => transaction.status !== "DP");
 
-        setPending(pendingOrders);
-        setSales(newSalesTotal);
-    }, [transaction]);
-    
+            switch(curr.status) {
+                case 'CLAIMED':
+                    newClaimed.push(curr);
+                    break;
+                case 'READY':
+                    newUnclaimed.push(curr);
+                    break;
+                case 'PRODUCTION':
+                    newProduction.push(curr);
+                    break;
+                case 'FULL':
+                    newFullyPaid.push(curr);
+                    break;   
+                case 'DOWN':
+                    newDownpayment.push(curr);
+                    break;
+                default:
+                    console.log('Check order status of Order ID:', curr.id);
+            }
+        });
+
+        const sortedData = () => {
+            const entries = Object.entries(datedTransactions);
+
+            entries.sort((a,b) => {
+                const dateA = new Date(a[0]);
+                const dateB = new Date(b[0]);
+                return dateB - dateA;
+            });
+
+            return Object.fromEntries(entries);
+        }
+
+        setClaimed(newClaimed);
+        setUnclaimed(newUnclaimed);
+        setProduction(newProduction);
+        setFullyPaid(newFullyPaid);
+        setDownpayment(newDownpayment);
+        setDatedTransaction(sortedData);
+        setSales(computedSales);
+    }, [filteredTransaction, activeFilters]);
+        
     return (
         <DataContext.Provider value={{
-            items,
             data,
+            items,
+            setItems,
+
             transaction,
-            pending,
+            setTransaction,
+            
             totalSales,
+            setSales,
+            
             customers,
+            setCustomers,
+            
             vouchers,
+            setVouchers,
+            
             payments, 
+            setPayments,
+            
+            claimed,
+            unclaimed,
+            setClaimed,
+            
+            production,
+            setProduction,
+            
+            fullyPaid,
+            setFullyPaid,
+            
+            downpayment,
+            setDownpayment,
+
+            datedTransaction,
+            setDatedTransaction,
+            
+            searchOrder,
+            setSearchOrder,
+
+            activeFilters,
+            setActiveFilters,
+
             getOrderInfo,
             getPaymentInfo,
-            setPayments,
-            setVouchers,
-            setCustomers,
-            setSales,
-            setItems,
-            setPending,
-            setTransaction
         }}>
             {children}
         </DataContext.Provider>
     );
 }
 
-export const useData = () => {
-    const context = useContext(DataContext);
-
-    if(context === null){
-        throw new Error('useData must be used within a DataProvider');
-    }
-
-    return context;
-};
 
 export default useData
