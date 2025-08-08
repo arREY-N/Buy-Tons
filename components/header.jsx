@@ -5,9 +5,10 @@ import {
     Text,
     View
 } from "react-native";
+import StyledText from "./styledText";
 
 export const Header = () => {
-    const {theme} = useTheme();
+    const { theme, toggleTheme, AppColors } = useTheme();
 
     const styles = StyleSheet.create({
         title: {
@@ -25,30 +26,44 @@ export const Header = () => {
 
     return(
         <View style={{margin: 10}}>
-            <Text style = {styles.title}>Buy Tons</Text>
-            <Text style = {styles.subtitle}>by Pythons</Text>
+            <Pressable onPress={toggleTheme}>
+                <Text style = {styles.title}>Buy Tons</Text>
+            </Pressable>
         </View>
     );
 }
 
-export const SubHead = () => {
+export const SectionHeading = ({title, link = null, onPress = null}) => {
     const styles = StyleSheet.create({
-        subHead:{
+        heading: {
             flexDirection: 'row',
             justifyContent: 'space-between',
-            marginHorizontal: 15,
-            marginBottom: 10
+            alignItems: 'center',
+            margin: 5,
+            marginVertical: 10,
         },
+        title: {
+            fontWeight: 'bold', 
+            fontSize: 18, 
+        }
     })
-
     return(
-        <View style = {styles.subHead}>
-            <Text>Items</Text>
-            <Pressable>
-                <Text>Add New</Text>
-            </Pressable>
+        <View style={styles.heading}>
+            <StyledText style={styles.title}>{title ? title : 'Title'}</StyledText>
+            {
+                link !== null ? 
+                    <>
+                        <Pressable onPress={() => onPress}>
+                            <StyledText>
+                                {link}
+                            </StyledText>
+                        </Pressable>
+                    </>
+                    :
+                    <></>
+            }
         </View>
-    );
+    )
 }
 
 export default Header;
