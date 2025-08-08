@@ -1,6 +1,6 @@
 export const globals = {
     radius: 8,
-    placeholder: '#ddd'
+    placeholder: '#eeefff'
 }
 
 export default globals
