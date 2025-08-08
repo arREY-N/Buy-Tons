@@ -4,19 +4,22 @@ import { StyleSheet, useColorScheme } from "react-native";
 export const COLOR_PALETTE = {
     light:{
         text: 'hsl(240, 7%, 6%)',
-        background: 'hsl(0, 0%, 95%)',
-        container: 'hsl(0, 0%, 90%)',
+        background: 'hsl(0, 0%, 85%)',
+        container: 'hsl(0, 0%, 95%)',
+        placeholder: 'rgba(0, 0, 0, 0.5)'
     },
     dark: {
         text: 'hsl(0, 0%, 90%)',
         background: 'hsl(240, 7%, 6%)',
-        container: 'hsl(252, 9%, 12%)'
+        container: 'hsl(252, 9%, 12%)',
+        placeholder: 'rgba(255, 255, 255, 0.3)'
     }
 };
 
 export const AppColors = {
     primary: 'hsl(0, 71%, 26%)',
-    secondary: 'hsl(0, 0%, 9%)'
+    secondary: 'hsl(0, 0%, 9%)',
+    highlight: 'hsla(0, 100%, 50%, 1.00)',
 }
 
 const ThemeContext = createContext({
