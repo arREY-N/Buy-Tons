@@ -3,7 +3,7 @@ import globals from '@/constants/globals';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Platform, StyleSheet, View } from "react-native";
 
-export const Info = ({title, value, style}) => {
+export const Info = ({title, value, style, children = null}, ) => {
     const { theme } = useTheme()
 
     const styles = StyleSheet.create({
@@ -34,8 +34,14 @@ export const Info = ({title, value, style}) => {
 
     return(
         <View style = {styles.infoContainer}>
-            <StyledText style = {styles.infoTitle}>{title}</StyledText>
-            <StyledText style = {styles.infoValue}>{value}</StyledText>
+            {
+                children === null ? 
+                <>
+                    <StyledText style = {styles.infoTitle}>{title}</StyledText>
+                    <StyledText style = {styles.infoValue}>{value}</StyledText>
+                </> : 
+                    children
+            }
         </View>
     )
 }
