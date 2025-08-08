@@ -1,38 +1,33 @@
 export const paymentsData = [
     {
-        id: 1,
-        amount: 255,
+        id: 20,
+        amount: 20,
         date: new Date(2025, 7, 5, 11, 11, 11)
     },
     {
-        id: 2,
-        amount: 300,
+        id: 50,
+        amount: 50,
         date: new Date(2025, 7, 5, 13, 20, 22)
     },
     {
-        id: 3,
-        amount: 150,
+        id: 100,
+        amount: 100,
         date: new Date(2025, 7, 6, 13, 30, 22)
     },
     {
-        id: 4,
-        amount: 600,
+        id: 200,
+        amount: 200,
         date: new Date(2025, 8, 4, 11, 30, 22)
     },
     {
-        id: 5,
-        amount: 50,
+        id: 500,
+        amount: 500,
         date: new Date(2025, 8, 5, 9, 20, 22)
     },
     {
-        id: 6,
-        amount: 100,
+        id: 1000,
+        amount: 1000,
         date: new Date(2025, 8, 5, 14, 20, 22)
-    },
-    {
-        id: 7,
-        amount: 70,
-        date: new Date(2025, 8, 5, 13, 20, 22)
     }
 ];
 
