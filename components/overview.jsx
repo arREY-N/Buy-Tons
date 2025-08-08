@@ -1,30 +1,55 @@
-import { SubHead } from '@/components/header';
+import { SectionHeading } from '@/components/header';
 import Info from '@/components/info';
 import useData from '@/contexts/DataContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { FlatList, StyleSheet, View } from "react-native";
 import ItemBox from './itemBox';
+import ValueCard from './valueCard';
 
 export const Overview = () => {
-    const { totalSales, pending } = useData();
+    const { 
+        totalSales, 
+        unclaimed, 
+        production, 
+        fullyPaid, 
+        downpayment 
+    } = useData()
 
     const styles = StyleSheet.create({
-        overview:{
-            flexDirection: 'row',
+        overview: {
+            flexDirection: 'column',
             justifyContent: 'space-between',
-            alignItems: 'center'
+        },
+        values: {
+            flexDirection: 'row',
         }
     })
     
     return(
         <View style = {styles.overview}>
-            <Info 
-                title={'Total Sales'} 
-                value={`P${totalSales.toFixed(2)}`}/>
             
-            <Info 
-                title={'Pending Orders'} 
-                value={pending.length}/>
+            <SectionHeading 
+                title={'Overview'}/>
+
+            <View style = {styles.values}>
+                <Info 
+                    title={'Sales'} 
+                    value={`P${totalSales.toFixed(2)}`}/>
+                <Info 
+                    title={'Ship out'} 
+                    value={unclaimed.length}/>
+            </View>
+            <View style = {styles.values}>
+                <ValueCard 
+                    title = {'Production'}
+                    value = {production.length} />
+                <ValueCard 
+                    title = {'Full'}
+                    value = {fullyPaid.length} />
+                <ValueCard 
+                    title = {'Partial'}
+                    value = {downpayment.length} />   
+            </View>
         </View>
     )
 }
@@ -52,7 +77,9 @@ export const ItemGallery = () => {
 
     return(
         <View>
-            <SubHead/>
+            <SectionHeading
+                title={'Item'}
+                link={'Add item'}/>
             
             <FlatList
                 data={data}
